@@ -26,11 +26,12 @@
             android:text="Matches" />
 
         <Button
-            android:layout_weight="1"
+            android:id="@+id/profile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Profile"
-            android:onClick="goToSettings" />
+            android:layout_weight="1"
+            android:onClick="goToSettings"
+            android:text="Profile" />
         <Button
             android:layout_weight="1"
             android:layout_width="wrap_content"

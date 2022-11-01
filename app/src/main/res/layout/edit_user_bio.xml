@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:clipToPadding="false"
+    android:outlineProvider="bounds"
+    android:paddingLeft="40sp"
+    android:paddingTop="20sp"
+    android:paddingRight="40sp"
+    android:paddingBottom="0sp"
+    tools:context=".EditUserActivity">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:elevation="2dp"
+        app:cardCornerRadius="4dp">
+
+        <LinearLayout
+            android:layout_width="330dp"
+            android:layout_height="500dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="20sp"
+                android:paddingTop="5dp"
+                android:paddingRight="20sp"
+                android:paddingBottom="5dp">
+
+                <TextView
+                    android:id="@+id/intro"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|left"
+                    android:text="Hello, I am "
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp" />
+
+                <EditText
+                    android:id="@+id/name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:text="Name"
+                    android:textSize="20sp" />
+
+            </LinearLayout>
+
+
+            <EditText
+
+                android:id="@+id/bio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="20sp"
+                android:paddingTop="5dp"
+                android:paddingRight="20sp"
+                android:paddingBottom="5dp"
+                android:textColor="@android:color/black"
+                android:textSize="20sp"
+                tools:text="bio" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="20sp"
+                android:paddingTop="5dp"
+                android:paddingRight="20sp"
+                android:paddingBottom="5dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|left"
+                    android:text="Main Goal: "
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp" />
+
+
+                <EditText
+                    android:id="@+id/goal"
+                    android:layout_width="198dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="bottom|left"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp"
+                    tools:text="goal" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="20sp"
+                android:paddingTop="5dp"
+                android:paddingRight="20sp"
+                android:paddingBottom="5dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|left"
+                    android:text="Skill Level: "
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp" />
+
+                <EditText
+                    android:id="@+id/skillLevel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|left"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp"
+                    tools:text="level" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="157dp"
+                android:orientation="vertical"
+                android:paddingLeft="20sp"
+                android:paddingTop="5dp"
+                android:paddingRight="20sp"
+                android:paddingBottom="5dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|left"
+                    android:text="Interests "
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp" />
+                <!--                <TextView-->
+                <!--                    android:id="@+id/interest"-->
+                <!--                    android:layout_width="match_parent"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:layout_gravity="bottom|left"-->
+                <!--                    android:textColor="@android:color/black"-->
+                <!--                    android:textSize="20sp"-->
+                <!--                    tools:text="interests" />-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:paddingBottom="7dp">
+
+                        <ImageButton
+                            android:id="@+id/interest1_b"
+                            android:layout_width="match_parent"
+                            android:layout_height="90dp"
+                            android:layout_marginLeft="0dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/common_google_signin_btn_icon_dark" />
+
+                        <TextView
+                            android:id="@+id/interest1_t"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:textSize="10dp"
+                            tools:text="interests" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:paddingBottom="7dp">
+
+                        <ImageButton
+                            android:id="@+id/interest2_b"
+                            android:layout_width="match_parent"
+                            android:layout_height="90dp"
+                            android:layout_marginLeft="0dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/common_google_signin_btn_icon_dark" />
+
+                        <TextView
+                            android:id="@+id/interest2_t"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:textSize="10dp"
+                            tools:text="interests" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:paddingBottom="7dp">
+
+                        <ImageButton
+                            android:id="@+id/interest3_b"
+                            android:layout_width="match_parent"
+                            android:layout_height="90dp"
+                            android:layout_marginLeft="0dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/common_google_signin_btn_icon_dark" />
+
+                        <TextView
+                            android:id="@+id/interest3_t"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:textSize="10dp"
+                            tools:text="interests" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+                <!--                <ImageButton-->
+                <!--                    android:id="@+id/imageButton"-->
+                <!--                    android:layout_width="83dp"-->
+                <!--                    android:layout_height="87dp"-->
+                <!--                    tools:srcCompat="@tools:sample/avatars" />-->
+
+                <!--                <ImageButton-->
+                <!--                    android:id="@+id/imageButton3"-->
+                <!--                    android:layout_width="95dp"-->
+                <!--                    android:layout_height="88dp"-->
+                <!--                    tools:srcCompat="@tools:sample/avatars" />-->
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="295dp"
+                android:layout_height="52dp"
+                android:layoutDirection="inherit"
+                android:orientation="horizontal"
+                android:outlineProvider="none">
+
+                <Button
+                    android:id="@+id/back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="back" />
+
+                <Button
+                    android:id="@+id/save"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="save" />
+
+                <Button
+                    android:id="@+id/PicButton"
+                    android:layout_width="152dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="top"
+                    android:layout_weight="1"
+                    android:gravity="top|center_vertical"
+                    android:text="view Pic and ZIP" />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+    </androidx.cardview.widget.CardView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"></LinearLayout>
+
+
+</LinearLayout>

@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void goToSettings(android.view.View view) {
-        Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+        Intent intent = new Intent(MainActivity.this, EditUserActivity.class);
         intent.putExtra("userSex", userSex);
         startActivity(intent);
         return;
