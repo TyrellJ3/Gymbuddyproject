@@ -99,10 +99,18 @@ public class MainActivity extends AppCompatActivity {
         flingContainer.setOnItemClickListener(new SwipeFlingAdapterView.OnItemClickListener() {
             @Override
             public void onItemClicked(int itemPosition, Object dataObject) {
+                cards swipedUser = (cards) dataObject;
+                openBio(swipedUser);
                 Toast.makeText(MainActivity.this, "Item Clicked", Toast.LENGTH_SHORT).show();
             }
         });
 
+    }
+
+    private void openBio(cards swipedUser) {
+        Intent intent = new Intent(this, MatchBioActivity.class);
+        intent.putExtra("swipedUserName", swipedUser.getName());
+        startActivity(intent);
     }
 
     private void isConnectionMatch(String userId) {
