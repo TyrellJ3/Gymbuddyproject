@@ -19,6 +19,9 @@
                 android:value="" />
         </activity>
         <activity android:name=".MainActivity" />
+        <activity android:name=".EditPicAndAddress"
+            />
+        <activity android:name=".EditUserActivity" />
         <activity
             android:name=".loginOrReg"
             android:exported="true">
