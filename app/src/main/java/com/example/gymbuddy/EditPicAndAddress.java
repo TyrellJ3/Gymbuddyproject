@@ -82,6 +82,9 @@ public class EditPicAndAddress extends AppCompatActivity {
         ImageView myImg =(ImageView)findViewById(R.id.myPic);
         Button save =(Button)findViewById(R.id.Save);
         // get the Firebase  storage reference
+
+
+        /*This Part loads images to image views from DB*/
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
         StorageReference ref
@@ -115,7 +118,7 @@ public class EditPicAndAddress extends AppCompatActivity {
                     }
                 });
 
-
+        // ^^^^^ image loader
 
 
 
