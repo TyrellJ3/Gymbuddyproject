@@ -224,7 +224,7 @@ public class EditUserActivity extends AppCompatActivity {
             String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
             // String uSex = FirebaseAuth.getInstance().getCurrentUser();
 
-            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Users").child("Male");
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
 
 
             DatabaseReference userReference = databaseReference.child(uid);
@@ -293,7 +293,7 @@ public class EditUserActivity extends AppCompatActivity {
         userInfo.put("skillLevel", skillLevelS);
         userInfo.put("goal", goalS);
         DatabaseReference currentUserDb = FirebaseDatabase.getInstance()
-                .getReference().child("Users").child("Male").child(userID);
+                .getReference().child("Users").child(userID);
         currentUserDb.updateChildren(userInfo);
 
 
