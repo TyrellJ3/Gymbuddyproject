@@ -9,9 +9,9 @@
 
     <Button
         android:id="@+id/back"
-        android:layout_width="162dp"
+        android:layout_width="100dp"
 
-        android:layout_height="63dp"
+        android:layout_height="50dp"
         android:text="back" />
 
     <androidx.core.widget.NestedScrollView

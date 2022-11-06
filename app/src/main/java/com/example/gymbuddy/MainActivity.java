@@ -1,10 +1,13 @@
 package com.example.gymbuddy;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -106,6 +109,32 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.menu,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+    public boolean onOptionsItemSelected (@NonNull MenuItem item){
+        switch (item.getItemId()){
+            case R.id.profile:
+                Intent intent = new Intent(MainActivity.this, EditUserActivity.class);
+                //intent.putExtra("userSex", userSex);
+                startActivity(intent);
+
+                break;
+            case R.id.matches:
+                intent = new Intent(MainActivity.this, MatchesActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.logout:
+                mAuth.signOut();
+                intent = new Intent(MainActivity.this, loginOrReg.class);
+                startActivity(intent);
+                finish();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
 
     private void openBio(cards swipedUser) {
         Intent intent = new Intent(this, MatchBioActivity.class);
@@ -205,23 +234,23 @@ public class MainActivity extends AppCompatActivity {
         return;
     }
 
-    public void goToSettings(android.view.View view) {
-        Intent intent = new Intent(MainActivity.this, EditUserActivity.class);
-        intent.putExtra("userSex", userSex);
-        startActivity(intent);
-        return;
-    }
-
-    public void goToMatches(android.view.View view) {
-        Intent intent = new Intent(MainActivity.this, MatchesActivity.class);
-        startActivity(intent);
-        return;
-    }
-    public void goToPictures(android.view.View view) {
-        Intent intent = new Intent(MainActivity.this, ProfilePic.class);
-        startActivity(intent);
-        return;
-    }
+//    public void goToSettings(android.view.View view) {
+//        Intent intent = new Intent(MainActivity.this, EditUserActivity.class);
+//        intent.putExtra("userSex", userSex);
+//        startActivity(intent);
+//        return;
+//    }
+//
+//    public void goToMatches(android.view.View view) {
+//        Intent intent = new Intent(MainActivity.this, MatchesActivity.class);
+//        startActivity(intent);
+//        return;
+//    }
+//    public void goToPictures(android.view.View view) {
+//        Intent intent = new Intent(MainActivity.this, ProfilePic.class);
+//        startActivity(intent);
+//        return;
+//    }
 
 }
 
