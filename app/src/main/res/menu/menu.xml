@@ -8,6 +8,12 @@
         app:showAsAction="collapseActionView"
         />
     <item
+        android:id="@+id/preferences"
+        android:icon="@drawable/ic_baseline_menu_24"
+        android:title="Preferences"
+        app:showAsAction="collapseActionView"
+        />
+    <item
         android:id="@+id/matches"
         android:icon="@drawable/ic_baseline_menu_24"
         android:title="Matches"

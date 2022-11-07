@@ -134,9 +134,13 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()){
             case R.id.profile:
                 Intent intent = new Intent(MainActivity.this, EditUserActivity.class);
-                //intent.putExtra("userSex", userSex);
+                intent.putExtra("userSex", userSex);
                 startActivity(intent);
-
+                break;
+            case R.id.preferences:
+                 intent = new Intent(MainActivity.this, PreferencesActivity.class);
+                intent.putExtra("currentUId", currentUId);
+                startActivity(intent);
                 break;
             case R.id.matches:
                 intent = new Intent(MainActivity.this, MatchesActivity.class);
@@ -380,24 +384,24 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public void goToSettings(android.view.View view) {
-        Intent intent = new Intent(MainActivity.this, EditUserActivity.class);
-        intent.putExtra("userSex", userSex);
-        startActivity(intent);
-        return;
-    }
-
-    public void goToMatches(android.view.View view) {
-        Intent intent = new Intent(MainActivity.this, MatchesActivity.class);
-        startActivity(intent);
-        return;
-    }
-    public void goToPictures(android.view.View view) {
-        Intent intent = new Intent(MainActivity.this, PreferencesActivity.class);
-        intent.putExtra("currentUId", currentUId);
-        startActivity(intent);
-        return;
-    }
+//    public void goToSettings(android.view.View view) {
+//        Intent intent = new Intent(MainActivity.this, EditUserActivity.class);
+//        intent.putExtra("userSex", userSex);
+//        startActivity(intent);
+//        return;
+//    }
+//
+//    public void goToMatches(android.view.View view) {
+//        Intent intent = new Intent(MainActivity.this, MatchesActivity.class);
+//        startActivity(intent);
+//        return;
+//    }
+//    public void goToPictures(android.view.View view) {
+//        Intent intent = new Intent(MainActivity.this, PreferencesActivity.class);
+//        intent.putExtra("currentUId", currentUId);
+//        startActivity(intent);
+//        return;
+//    }
 
 
 
