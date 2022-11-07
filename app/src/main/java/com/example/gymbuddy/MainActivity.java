@@ -1,5 +1,6 @@
 package com.example.gymbuddy;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -53,19 +54,21 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         currentUId = mAuth.getCurrentUser().getUid();
 
-        sexPreference = "female";
+        getUserPreferences();
+
+        //sexPreference = "female";
         //checkUserSex();
-        switch (sexPreference){
-            case "male":
-                getMaleUsers();
-                break;
-            case "female":
-                getFemaleUsers();
-                break;
-            default:
-                getAllSexUsers();
-                break;
-        }
+//        switch (sexPreference){
+//            case "male":
+//                getMaleUsers();
+//                break;
+//            case "female":
+//                getFemaleUsers();
+//                break;
+//            default:
+//                getAllSexUsers();
+//                break;
+//        }
 
         rowItems = new ArrayList<cards>();
 
@@ -149,6 +152,35 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void getUserPreferences(){
+        DatabaseReference currentUserPrefDb = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUId).child("preferences");
+        currentUserPrefDb.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    if (snapshot.child("sex").getValue() != null){
+                        sexPreference = snapshot.child("sex").getValue(String.class);
+                        switch (sexPreference){
+                            case "men":
+                                getMaleUsers();
+                                break;
+                            case "women":
+                                getFemaleUsers();
+                                break;
+                            default:
+                                getAllSexUsers();
+                                break;
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
     private String userSex;
     private String oppositeUserSex;
     public void checkUserSex(){
