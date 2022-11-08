@@ -12,13 +12,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GymBuddy">
         <activity
-            android:name=".PreferencesActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
             android:name=".ProfilePic"
             android:exported="false">
             <meta-data
@@ -26,7 +19,8 @@
                 android:value="" />
         </activity>
         <activity android:name=".MainActivity" />
-        <activity android:name=".EditPicAndAddress" />
+        <activity android:name=".EditPicAndAddress"
+            />
         <activity android:name=".EditUserActivity" />
         <activity
             android:name=".loginOrReg"
