@@ -1,5 +1,6 @@
 package com.example.gymbuddy;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 
 import com.example.gymbuddy.Cards.cards;
 import com.example.gymbuddy.Matches.MatchesActivity;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -19,10 +21,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.maps.android.SphericalUtil;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
     private cards cards_data[];
@@ -35,6 +41,12 @@ public class MainActivity extends AppCompatActivity {
 
     private DatabaseReference usersDb;
 
+    private String sexPreference;
+
+    private LatLng user2Address;
+
+    private LatLng address;
+    private double distance;
 
     ListView listView;
     List<cards> rowItems;
@@ -50,7 +62,21 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         currentUId = mAuth.getCurrentUser().getUid();
 
-        checkUserSex();
+        getUserPreferences();
+
+        //sexPreference = "female";
+        //checkUserSex();
+//        switch (sexPreference){
+//            case "male":
+//                getMaleUsers();
+//                break;
+//            case "female":
+//                getFemaleUsers();
+//                break;
+//            default:
+//                getAllSexUsers();
+//                break;
+//        }
 
         rowItems = new ArrayList<cards>();
 
@@ -99,10 +125,18 @@ public class MainActivity extends AppCompatActivity {
         flingContainer.setOnItemClickListener(new SwipeFlingAdapterView.OnItemClickListener() {
             @Override
             public void onItemClicked(int itemPosition, Object dataObject) {
+                cards swipedUser = (cards) dataObject;
+                openBio(swipedUser);
                 Toast.makeText(MainActivity.this, "Item Clicked", Toast.LENGTH_SHORT).show();
             }
         });
 
+    }
+
+    private void openBio(cards swipedUser) {
+        Intent intent = new Intent(this, MatchBioActivity.class);
+        intent.putExtra("swipedUserName", swipedUser.getName());
+        startActivity(intent);
     }
 
     private void isConnectionMatch(String userId) {
@@ -126,6 +160,42 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void getUserPreferences(){
+        DatabaseReference currentUserPrefDb = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUId).child("preferences");
+        currentUserPrefDb.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    if (snapshot.child("sex").getValue() != null){
+                        sexPreference = snapshot.child("sex").getValue(String.class);
+                        switch (sexPreference){
+                            case "men":
+                                getMaleUsers();
+                                break;
+                            case "women":
+                                getFemaleUsers();
+                                break;
+                            default:
+                                getAllSexUsers();
+                                break;
+                        }
+                    }
+                    if (snapshot.child("address").getValue() != null) {
+                        address = new LatLng(snapshot.child("address").child("lat").getValue(Double.class),
+                                snapshot.child("address").child("lng").getValue(Double.class));
+                    }
+                    if(snapshot.child("distance").getValue() != null){
+                        distance = snapshot.child("distance").getValue(Double.class);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
     private String userSex;
     private String oppositeUserSex;
     public void checkUserSex(){
@@ -188,6 +258,137 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void getMaleUsers(){
+        usersDb.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                if (dataSnapshot.getKey() != currentUId && dataSnapshot.child("sex").getValue() != null) {
+                    if (dataSnapshot.exists() && !dataSnapshot.child("connections").child("nope").hasChild(currentUId) && !dataSnapshot.child("connections").child("yeps").hasChild(currentUId) && dataSnapshot.child("sex").getValue().toString().equals("Male")) {
+                        String profileImageUrl = "default";
+                        if (!dataSnapshot.child("profileImageUrl").getValue().equals("default")) {
+                            profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
+                        }
+                        if(dataSnapshot.child("preferences").getValue() == null){
+                            //add default preferences if they don't exist
+                            addDefaultPreferences(dataSnapshot.getKey());
+                        }
+                        user2Address = new LatLng(dataSnapshot.child("preferences").child("address").child("lat").getValue(Double.class),
+                                dataSnapshot.child("preferences").child("address").child("lng").getValue(Double.class));
+//                            Log.i("cal distance", ((Double)getDistance(address, user2Address)).toString());
+                        if(getDistance(address, user2Address) <= distance){
+                            cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), profileImageUrl);
+                            rowItems.add(item);
+                            Collections.shuffle(rowItems, new Random());
+                            arrayAdapter.notifyDataSetChanged();
+                        }
+
+                    }
+                }
+            }
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+    public void getFemaleUsers(){
+        usersDb.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                if (dataSnapshot.getKey() != currentUId && dataSnapshot.child("sex").getValue() != null) {
+                    if (dataSnapshot.exists() && !dataSnapshot.child("connections").child("nope").hasChild(currentUId) && !dataSnapshot.child("connections").child("yeps").hasChild(currentUId) && dataSnapshot.child("sex").getValue().toString().equals("Female")) {
+                        String profileImageUrl = "default";
+                        if (!dataSnapshot.child("profileImageUrl").getValue().equals("default")) {
+                            profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
+                        }
+                        if(dataSnapshot.child("preferences").getValue() == null){
+                            //add default preferences if they don't exist
+                            addDefaultPreferences(dataSnapshot.getKey());
+                        }
+                        user2Address = new LatLng(dataSnapshot.child("preferences").child("address").child("lat").getValue(Double.class),
+                                dataSnapshot.child("preferences").child("address").child("lng").getValue(Double.class));
+//                            Log.i("cal distance", ((Double)getDistance(address, user2Address)).toString());
+                        if(getDistance(address, user2Address) <= distance){
+                            cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), profileImageUrl);
+                            rowItems.add(item);
+                            Collections.shuffle(rowItems, new Random());
+                            arrayAdapter.notifyDataSetChanged();
+                        }
+
+                    }
+                }
+            }
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+    public void getAllSexUsers(){
+//        getMaleUsers();
+//        getFemaleUsers();
+
+        usersDb.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                if (dataSnapshot.getKey() != currentUId && dataSnapshot.child("sex").getValue() != null) {
+                    if (dataSnapshot.exists()
+                            && !dataSnapshot.child("connections").child("nope").hasChild(currentUId)
+                            && !dataSnapshot.child("connections").child("yeps").hasChild(currentUId)) {
+                        String profileImageUrl = "default";
+                        if (!dataSnapshot.child("profileImageUrl").getValue().equals("default")) {
+                            profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
+                        }
+                        if(dataSnapshot.child("preferences").getValue() == null){
+                            //add default preferences if they don't exist
+                            addDefaultPreferences(dataSnapshot.getKey());
+                        }
+                        user2Address = new LatLng(dataSnapshot.child("preferences").child("address").child("lat").getValue(Double.class),
+                                dataSnapshot.child("preferences").child("address").child("lng").getValue(Double.class));
+//                            Log.i("cal distance", ((Double)getDistance(address, user2Address)).toString());
+                        if(getDistance(address, user2Address) <= distance){
+                            cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), profileImageUrl);
+                            rowItems.add(item);
+                            Collections.shuffle(rowItems, new Random());
+                            arrayAdapter.notifyDataSetChanged();
+                        }
+
+                    }
+                }
+            }
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
 
     public void logoutUser(android.view.View view) {
         mAuth.signOut();
@@ -210,10 +411,55 @@ public class MainActivity extends AppCompatActivity {
         return;
     }
     public void goToPictures(android.view.View view) {
-        Intent intent = new Intent(MainActivity.this, ProfilePic.class);
+        Intent intent = new Intent(MainActivity.this, PreferencesActivity.class);
+        intent.putExtra("currentUId", currentUId);
         startActivity(intent);
         return;
     }
+    public LatLng randomTown(){
+        LatLng [] towns = {new LatLng(36.044659, -79.766235),
+        new LatLng(36.112478,-80.015112),
+        new LatLng(36.173469, -79.988928),
+        new LatLng(35.994303, -79.935314),
+        new LatLng(36.208747, -79.904758)};
+        //greensboro downtown
+        //colfax
+        //oak ridge
+        //jamestown
+        //summerfield
+        return towns[(int)(Math.random()*(towns.length-1))];
+    }
+    public void addDefaultPreferences(String userId){
+        Random random = new Random();
+        //snapshot.getkey
+        DatabaseReference userPref = usersDb.child(userId).child("preferences");
+        final HashMap<String, Object> preferenceHolder = new HashMap<>();
+        LatLng randomAddress = randomTown();
+        preferenceHolder.put("lat", randomAddress.latitude);
+        preferenceHolder.put("lng", randomAddress.longitude);
+        userPref.child("address").updateChildren(preferenceHolder);
+        preferenceHolder.clear();
+
+        //update age
+        int min_age = random.nextInt(120 - 18) + 18;
+        preferenceHolder.put("min_age", min_age);
+        preferenceHolder.put("max_age", random.nextInt(120 - min_age) + min_age);
+        userPref.child("age").updateChildren(preferenceHolder);
+        preferenceHolder.clear();
+        preferenceHolder.put("distance", random.nextInt(25));
+        preferenceHolder.put("sex", "all");
+        userPref.updateChildren(preferenceHolder);
+        preferenceHolder.clear();
+    }
+    public double getDistance(LatLng start, LatLng end) {
+        double distance;
+        distance = SphericalUtil.computeDistanceBetween(start, end);
+        Toast.makeText(this, (distance / 1000) * 0.621 + " mi", Toast.LENGTH_SHORT).show();
+        // /1000 gives km, *.621 converts to mi
+        Log.i("distance", "distance in mi: " + (distance / 1000) * 0.621);
+        return (distance / 1000) * 0.621;
+    }
+
 
 }
 
