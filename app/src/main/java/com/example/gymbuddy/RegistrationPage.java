@@ -86,11 +86,14 @@ public class RegistrationPage extends AppCompatActivity {
                             Map userInfo = new HashMap<>();
                             userInfo.put("name", name);
                             userInfo.put("sex", radioButton.getText().toString());
-                            userInfo.put("profileImageUrl", "default");
+
                             userInfo.put("address", "123 sesame street");
                             userInfo.put("bio", "default Bio");
-                            userInfo.put("goal", "123 sesame street");
-                            userInfo.put("skillLevel", "default Bio");
+                            userInfo.put("goal", "Big Goals");
+                            userInfo.put("skillLevel", 0);
+                            userInfo.put("interestA", 0);
+                            userInfo.put("interestB", 1);
+                            userInfo.put("interestC", 2);
                             currentUserDb.updateChildren(userInfo);
                         }
                     }
