@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.gymbuddy.Matches.MatchesActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
@@ -31,7 +32,7 @@ import java.util.UUID;
 
 public class ProfilePic extends AppCompatActivity {
 private ImageView profilePic;
-private Button close,save;
+private Button close,save,logOut,messages,matches;
 private TextView profileChangeBtn;
 public Uri imageUri;
 private String myUri ="";
@@ -52,11 +53,40 @@ private StorageReference storageReference;
 
         storageReference = FirebaseStorage.getInstance().getReference().child("profileImageUrl");
         profilePic = findViewById(R.id.profilePic);
-
+        logOut = (Button) findViewById(R.id.logOutButton);
+        matches = (Button) findViewById(R.id.MatchesButton);
+        messages = (Button) findViewById(R.id.MessagesButton);
         close = findViewById(R.id.close);
         save = findViewById(R.id.save);
 
         close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick (View v){
+                startActivity(new Intent(ProfilePic.this,MainActivity.class));
+            }
+
+        });
+
+        logOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick (View v){
+                mAuth.signOut();
+                Intent intent = new Intent(ProfilePic.this, loginOrReg.class);
+                startActivity(intent);
+                finish();
+                return;
+            }
+
+        });
+        matches.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick (View v){
+                Intent intent = new Intent(ProfilePic.this, MatchesActivity.class);
+                startActivity(intent);
+            }
+
+        });
+        messages.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick (View v){
                 startActivity(new Intent(ProfilePic.this,MainActivity.class));
@@ -124,6 +154,9 @@ private StorageReference storageReference;
                         Toast.makeText(getApplicationContext(),"Failed", Toast.LENGTH_LONG).show();
                     }
                 });
+
+
+
 //                .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
 //                    @Override
 //                    public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {

@@ -32,6 +32,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.example.gymbuddy.Matches.MatchesActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -81,6 +82,9 @@ public class EditPicAndAddress extends AppCompatActivity {
 
         ImageView myImg =(ImageView)findViewById(R.id.myPic);
         Button save =(Button)findViewById(R.id.Save);
+        Button matches =(Button)findViewById(R.id.MatchesButton);
+        Button logOut =(Button)findViewById(R.id.logOutButton);
+        Button messages =(Button)findViewById(R.id.MessagesButton);
         // get the Firebase  storage reference
 
 
@@ -140,6 +144,32 @@ public class EditPicAndAddress extends AppCompatActivity {
 
             }
 
+
+        });
+        logOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick (View v){
+                mauth.signOut();
+                Intent intent = new Intent(EditPicAndAddress.this, loginOrReg.class);
+                startActivity(intent);
+                finish();
+                return;
+            }
+
+        });
+        matches.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick (View v){
+                Intent intent = new Intent(EditPicAndAddress.this, MatchesActivity.class);
+                startActivity(intent);
+            }
+
+        });
+        messages.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick (View v){
+                startActivity(new Intent(EditPicAndAddress.this,MainActivity.class));
+            }
 
         });
 
