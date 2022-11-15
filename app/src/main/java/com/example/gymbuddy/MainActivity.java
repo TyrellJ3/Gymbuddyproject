@@ -265,22 +265,26 @@ public class MainActivity extends AppCompatActivity {
                 if (dataSnapshot.getKey() != currentUId && dataSnapshot.child("sex").getValue() != null) {
                     if (dataSnapshot.exists() && !dataSnapshot.child("connections").child("nope").hasChild(currentUId) && !dataSnapshot.child("connections").child("yeps").hasChild(currentUId) && dataSnapshot.child("sex").getValue().toString().equals("Male")) {
                         String profileImageUrl = "default";
-                        if (!dataSnapshot.child("profileImageUrl").getValue().equals("default")) {
-                            profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
-                        }
+//                        if (!dataSnapshot.child("profileImageUrl").getValue().equals("default")) {
+//                            profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
+//                        }
+                        //Log.i("profileImageUrl", ((Boolean)(dataSnapshot.child("profileImageUrl") == null)).toString());
                         if(dataSnapshot.child("preferences").getValue() == null){
                             //add default preferences if they don't exist
                             addDefaultPreferences(dataSnapshot.getKey());
                         }
-                        user2Address = new LatLng(dataSnapshot.child("preferences").child("address").child("lat").getValue(Double.class),
-                                dataSnapshot.child("preferences").child("address").child("lng").getValue(Double.class));
+                        if (dataSnapshot.child("preferences").getValue() != null){
+                            user2Address = new LatLng(dataSnapshot.child("preferences").child("address").child("lat").getValue(Double.class),
+                                    dataSnapshot.child("preferences").child("address").child("lng").getValue(Double.class));
 //                            Log.i("cal distance", ((Double)getDistance(address, user2Address)).toString());
-                        if(getDistance(address, user2Address) <= distance){
-                            cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), profileImageUrl);
-                            rowItems.add(item);
-                            Collections.shuffle(rowItems, new Random());
-                            arrayAdapter.notifyDataSetChanged();
+                            if(getDistance(address, user2Address) <= distance){
+                                cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), profileImageUrl);
+                                rowItems.add(item);
+                                Collections.shuffle(rowItems, new Random());
+                                arrayAdapter.notifyDataSetChanged();
+                            }
                         }
+
 
                     }
                 }
@@ -307,21 +311,27 @@ public class MainActivity extends AppCompatActivity {
                 if (dataSnapshot.getKey() != currentUId && dataSnapshot.child("sex").getValue() != null) {
                     if (dataSnapshot.exists() && !dataSnapshot.child("connections").child("nope").hasChild(currentUId) && !dataSnapshot.child("connections").child("yeps").hasChild(currentUId) && dataSnapshot.child("sex").getValue().toString().equals("Female")) {
                         String profileImageUrl = "default";
-                        if (!dataSnapshot.child("profileImageUrl").getValue().equals("default")) {
-                            profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
-                        }
+//                        if (!dataSnapshot.child("profileImageUrl").getValue().equals("default")) {
+//                            profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
+//                        }
                         if(dataSnapshot.child("preferences").getValue() == null){
                             //add default preferences if they don't exist
                             addDefaultPreferences(dataSnapshot.getKey());
                         }
-                        user2Address = new LatLng(dataSnapshot.child("preferences").child("address").child("lat").getValue(Double.class),
-                                dataSnapshot.child("preferences").child("address").child("lng").getValue(Double.class));
+                        if(dataSnapshot.child("age").getValue() == null){
+                            //add random default age if doesn't have one
+
+                        }
+                        if (dataSnapshot.child("preferences").getValue() != null){
+                            user2Address = new LatLng(dataSnapshot.child("preferences").child("address").child("lat").getValue(Double.class),
+                                    dataSnapshot.child("preferences").child("address").child("lng").getValue(Double.class));
 //                            Log.i("cal distance", ((Double)getDistance(address, user2Address)).toString());
-                        if(getDistance(address, user2Address) <= distance){
-                            cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), profileImageUrl);
-                            rowItems.add(item);
-                            Collections.shuffle(rowItems, new Random());
-                            arrayAdapter.notifyDataSetChanged();
+                            if(getDistance(address, user2Address) <= distance){
+                                cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), profileImageUrl);
+                                rowItems.add(item);
+                                Collections.shuffle(rowItems, new Random());
+                                arrayAdapter.notifyDataSetChanged();
+                            }
                         }
 
                     }
@@ -354,21 +364,23 @@ public class MainActivity extends AppCompatActivity {
                             && !dataSnapshot.child("connections").child("nope").hasChild(currentUId)
                             && !dataSnapshot.child("connections").child("yeps").hasChild(currentUId)) {
                         String profileImageUrl = "default";
-                        if (!dataSnapshot.child("profileImageUrl").getValue().equals("default")) {
-                            profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
-                        }
+//                        if (!dataSnapshot.child("profileImageUrl").getValue().equals("default")) {
+//                            profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
+//                        }
                         if(dataSnapshot.child("preferences").getValue() == null){
                             //add default preferences if they don't exist
                             addDefaultPreferences(dataSnapshot.getKey());
                         }
-                        user2Address = new LatLng(dataSnapshot.child("preferences").child("address").child("lat").getValue(Double.class),
-                                dataSnapshot.child("preferences").child("address").child("lng").getValue(Double.class));
+                        if (dataSnapshot.child("preferences").getValue() != null){
+                            user2Address = new LatLng(dataSnapshot.child("preferences").child("address").child("lat").getValue(Double.class),
+                                    dataSnapshot.child("preferences").child("address").child("lng").getValue(Double.class));
 //                            Log.i("cal distance", ((Double)getDistance(address, user2Address)).toString());
-                        if(getDistance(address, user2Address) <= distance){
-                            cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), profileImageUrl);
-                            rowItems.add(item);
-                            Collections.shuffle(rowItems, new Random());
-                            arrayAdapter.notifyDataSetChanged();
+                            if(getDistance(address, user2Address) <= distance){
+                                cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), profileImageUrl);
+                                rowItems.add(item);
+                                Collections.shuffle(rowItems, new Random());
+                                arrayAdapter.notifyDataSetChanged();
+                            }
                         }
 
                     }
