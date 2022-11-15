@@ -13,6 +13,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -23,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class RegistrationPage extends AppCompatActivity {
     private Button mRegister;
@@ -58,6 +60,7 @@ public class RegistrationPage extends AppCompatActivity {
         mEmail = (EditText) findViewById(R.id.email);
         mPassword = (EditText) findViewById(R.id.password);
         mName = (EditText) findViewById(R.id.name);
+        EditText mage = findViewById(R.id.age);
 
         mRadioGroup = (RadioGroup) findViewById(R.id.radioGroup);
 
@@ -75,6 +78,7 @@ public class RegistrationPage extends AppCompatActivity {
                 final String email = mEmail.getText().toString();
                 final String password = mPassword.getText().toString();
                 final String name = mName.getText().toString();
+                final int age = Integer.parseInt(mage.getText().toString());
                 mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(RegistrationPage.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -86,14 +90,17 @@ public class RegistrationPage extends AppCompatActivity {
                             Map userInfo = new HashMap<>();
                             userInfo.put("name", name);
                             userInfo.put("sex", radioButton.getText().toString());
+                            userInfo.put("age", age);
 
-                            userInfo.put("address", "123 sesame street");
-                            userInfo.put("bio", "default Bio");
-                            userInfo.put("goal", "Big Goals");
+                            userInfo.put("bio", " ");
+                            userInfo.put("goal", " ");
                             userInfo.put("skillLevel", 0);
                             userInfo.put("interestA", 0);
-                            userInfo.put("interestB", 1);
-                            userInfo.put("interestC", 2);
+                            userInfo.put("interestB", 0);
+                            userInfo.put("interestC", 0);
+
+                            addDefaultPreferences(userId);
+
                             currentUserDb.updateChildren(userInfo);
                         }
                     }
@@ -112,6 +119,42 @@ public class RegistrationPage extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         mAuth.removeAuthStateListener(firebaseAuthStateListener);
+    }
+
+
+    public void addDefaultPreferences(String userId){
+        Random random = new Random();
+        //snapshot.getkey
+        DatabaseReference userPref = FirebaseDatabase.getInstance().getReference().child("Users").child(userId).child("preferences");
+        final HashMap<String, Object> preferenceHolder = new HashMap<>();
+        LatLng randomAddress = randomTown();
+        preferenceHolder.put("lat", randomAddress.latitude);
+        preferenceHolder.put("lng", randomAddress.longitude);
+        userPref.child("address").updateChildren(preferenceHolder);
+        preferenceHolder.clear();
+
+        //update age
+        preferenceHolder.put("min_age", 18);
+        preferenceHolder.put("max_age", 100);
+        userPref.child("age").updateChildren(preferenceHolder);
+        preferenceHolder.clear();
+        preferenceHolder.put("distance", 20);
+        preferenceHolder.put("sex", "all");
+        userPref.updateChildren(preferenceHolder);
+        preferenceHolder.clear();
+    }
+    public LatLng randomTown(){
+        LatLng [] towns = {new LatLng(36.044659, -79.766235),
+                new LatLng(36.112478,-80.015112),
+                new LatLng(36.173469, -79.988928),
+                new LatLng(35.994303, -79.935314),
+                new LatLng(36.208747, -79.904758)};
+        //greensboro downtown
+        //colfax
+        //oak ridge
+        //jamestown
+        //summerfield
+        return towns[(int)(Math.random()*(towns.length-1))];
     }
 }
 

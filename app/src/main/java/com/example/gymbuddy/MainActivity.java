@@ -371,6 +371,7 @@ public class MainActivity extends AppCompatActivity {
                             //add default preferences if they don't exist
                             addDefaultPreferences(dataSnapshot.getKey());
                         }
+                        addDefaultBio(dataSnapshot.getKey());
                         if (dataSnapshot.child("preferences").getValue() != null){
                             user2Address = new LatLng(dataSnapshot.child("preferences").child("address").child("lat").getValue(Double.class),
                                     dataSnapshot.child("preferences").child("address").child("lng").getValue(Double.class));
@@ -441,6 +442,24 @@ public class MainActivity extends AppCompatActivity {
         //summerfield
         return towns[(int)(Math.random()*(towns.length-1))];
     }
+    public void addDefaultBio(String userId){
+        final HashMap<String, Object> userInfo = new HashMap<>();
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
+        Random rand = new Random();
+        int age = rand.nextInt((35 - 18) + 1) + 18;
+        userInfo.put("age", age);
+
+        userInfo.put("bio", " ");
+        userInfo.put("goal", " ");
+        userInfo.put("skillLevel", 0);
+        userInfo.put("interestA", 0);
+        userInfo.put("interestB", 0);
+        userInfo.put("interestC", 0);
+
+        userRef.updateChildren(userInfo);
+        userInfo.clear();
+
+    }
     public void addDefaultPreferences(String userId){
         Random random = new Random();
         //snapshot.getkey
@@ -453,12 +472,11 @@ public class MainActivity extends AppCompatActivity {
         preferenceHolder.clear();
 
         //update age
-        int min_age = random.nextInt(120 - 18) + 18;
-        preferenceHolder.put("min_age", min_age);
-        preferenceHolder.put("max_age", random.nextInt(120 - min_age) + min_age);
+        preferenceHolder.put("min_age", 18);
+        preferenceHolder.put("max_age", 100);
         userPref.child("age").updateChildren(preferenceHolder);
         preferenceHolder.clear();
-        preferenceHolder.put("distance", random.nextInt(25));
+        preferenceHolder.put("distance", 20);
         preferenceHolder.put("sex", "all");
         userPref.updateChildren(preferenceHolder);
         preferenceHolder.clear();
