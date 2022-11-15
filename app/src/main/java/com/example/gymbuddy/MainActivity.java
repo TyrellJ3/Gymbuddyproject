@@ -371,7 +371,7 @@ public class MainActivity extends AppCompatActivity {
                             //add default preferences if they don't exist
                             addDefaultPreferences(dataSnapshot.getKey());
                         }
-                        addDefaultBio(dataSnapshot.getKey());
+                        //addDefaultBio(dataSnapshot.getKey());
                         if (dataSnapshot.child("preferences").getValue() != null){
                             user2Address = new LatLng(dataSnapshot.child("preferences").child("address").child("lat").getValue(Double.class),
                                     dataSnapshot.child("preferences").child("address").child("lng").getValue(Double.class));
