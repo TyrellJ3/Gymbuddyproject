@@ -36,7 +36,7 @@ public class MatchBioActivity extends AppCompatActivity {
 
         String value = "";
         String key;
-        String [] interestList = {"running", "lifting", "yoga"};
+        //String [] interestList = {"running", "lifting", "yoga"};
         Bundle extras = getIntent().getExtras();
 
         TextView name = (TextView) findViewById(R.id.name);
@@ -72,23 +72,31 @@ public class MatchBioActivity extends AppCompatActivity {
             goal.setText(extras.getString("goal"));
             name.setText(uname);
             skillLevel.setText(skillLevelList[(int)extras.getLong("skillLevel")]);
+            Log.i("interest length", interestList.length + "");
             ia = (int)extras.getLong("interestA");
-            interestA_chip.setText(interestList[ia]);
-            if (ia == c_ia || ia == c_ib || ia == c_ic){
-                interestA_chip.setChipStrokeColor(csl);
-                interestA_chip.setChipStrokeWidth(c);
+            if (ia <= interestList.length-1){
+                interestA_chip.setText(interestList[ia]);
+                if (ia == c_ia || ia == c_ib || ia == c_ic){
+                    interestA_chip.setChipStrokeColor(csl);
+                    interestA_chip.setChipStrokeWidth(c);
+                }
             }
+
             ib = (int)extras.getLong("interestB");
-            interestB_chip.setText(interestList[ib]);
-            if (ib == c_ia || ib == c_ib || ib == c_ic){
-                interestB_chip.setChipStrokeColor(csl);
-                interestB_chip.setChipStrokeWidth(c);
+            if (ib <= interestList.length-1) {
+                interestB_chip.setText(interestList[ib]);
+                if (ib == c_ia || ib == c_ib || ib == c_ic) {
+                    interestB_chip.setChipStrokeColor(csl);
+                    interestB_chip.setChipStrokeWidth(c);
+                }
             }
             ic = (int)extras.getLong("interestC");
-            interestC_chip.setText(interestList[ic]);
-            if (ic == c_ia || ic == c_ib || ic == c_ic){
-                interestC_chip.setChipStrokeColor(csl);
-                interestC_chip.setChipStrokeWidth(c);
+            if (ic <= interestList.length-1) {
+                interestC_chip.setText(interestList[ic]);
+                if (ic == c_ia || ic == c_ib || ic == c_ic) {
+                    interestC_chip.setChipStrokeColor(csl);
+                    interestC_chip.setChipStrokeWidth(c);
+                }
             }
 
 
