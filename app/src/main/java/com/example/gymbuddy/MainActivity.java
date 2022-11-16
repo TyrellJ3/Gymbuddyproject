@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.ListView;
@@ -45,10 +46,16 @@ public class MainActivity extends AppCompatActivity {
 
     private LatLng user2Address;
 
+    private cards userCard;
+
+
     private LatLng address;
     private double distance;
 
     private int user2Age;
+
+    Preferences preferences;
+    Preferences user2Preferences;
 
     private final int[] ageRange = new int[2];
 
@@ -66,7 +73,10 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         currentUId = mAuth.getCurrentUser().getUid();
 
-        getUserPreferences();
+
+
+       userCard = getCurrentUserCard();
+       preferences = userCard.getP();
 
         //sexPreference = "female";
         //checkUserSex();
@@ -141,6 +151,16 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MatchBioActivity.class);
         intent.putExtra("swipedUserName", swipedUser.getName());
         intent.putExtra("swipedUserId", swipedUser.getUserId());
+        intent.putExtra("bio", swipedUser.getBio());
+        intent.putExtra("goal", swipedUser.getGoal());
+        intent.putExtra("interestA", swipedUser.getInterestA());
+        intent.putExtra("interestB", swipedUser.getInterestB());
+        intent.putExtra("interestC", swipedUser.getInterestC());
+        intent.putExtra("skillLevel", swipedUser.getSkillLevel());
+
+        intent.putExtra("c_interestA", userCard.getInterestA());
+        intent.putExtra("c_interestB", userCard.getInterestB());
+        intent.putExtra("c_interestc", userCard.getInterestC());
         startActivity(intent);
     }
 
@@ -164,21 +184,49 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+public cards getCurrentUserCard(){
+        cards user = new cards();
+    DatabaseReference currentUserPrefDb = usersDb.child(currentUId);
+    currentUserPrefDb.addValueEventListener(new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            if (snapshot.exists()){
+                user.setUserID(snapshot.getKey());
+                user.setAge(snapshot.child("age").getValue(Integer.class));
+                user.setBio(snapshot.child("bio").getValue(String.class));
+                user.setGoal(snapshot.child("goal").getValue(String.class));
+                user.setInterestA(snapshot.child("interestA").getValue(Long.class));
+                user.setInterestB(snapshot.child("interestB").getValue(Long.class));
+                user.setInterestC(snapshot.child("interestC").getValue(Long.class));
+                user.setSkillLevel(snapshot.child("skillLevel").getValue(Long.class));
+                user.setName(snapshot.child("name").getValue(String.class));
+                user.setP(getUserPreferences());
+            }
+        }
 
-    public void getUserPreferences(){
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+
+        }
+    });
+    return user;
+}
+    public Preferences getUserPreferences(){
+        Preferences p = new Preferences();
         DatabaseReference currentUserPrefDb = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUId).child("preferences");
         currentUserPrefDb.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){
+
                     if (snapshot.child("sex").getValue() != null){
                         sexPreference = snapshot.child("sex").getValue(String.class);
                         switch (sexPreference){
                             case "men":
-                                getMaleUsers();
+                                //getMaleUsers();
                                 break;
                             case "women":
-                                getFemaleUsers();
+                                //getFemaleUsers();
                                 break;
                             default:
                                 getAllSexUsers();
@@ -196,6 +244,11 @@ public class MainActivity extends AppCompatActivity {
                         ageRange[0] = snapshot.child("age").child("min_age").getValue(Integer.class);
                         ageRange[1] = snapshot.child("age").child("max_age").getValue(Integer.class);
                     }
+
+                    p.setAddress(address);
+                    p.setSex(sexPreference);
+                    p.setDistance((int)distance);
+                    p.setAge(ageRange);
                 }
             }
 
@@ -204,166 +257,167 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        return p;
     }
     private String userSex;
     private String oppositeUserSex;
-    public void checkUserSex(){
-        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference userDb = usersDb.child(user.getUid());
-        userDb.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()){
-                    if (dataSnapshot.child("sex").getValue() != null){
-                        userSex = dataSnapshot.child("sex").getValue().toString();
-                        switch (userSex){
-                            case "Male":
-                                oppositeUserSex = "Female";
-                                break;
-                            case "Female":
-                                oppositeUserSex = "Male";
-                                break;
-                        }
-                        getOppositeSexUsers();
-                    }
-                }
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+//    public void checkUserSex(){
+//        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//        DatabaseReference userDb = usersDb.child(user.getUid());
+//        userDb.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                if (dataSnapshot.exists()){
+//                    if (dataSnapshot.child("sex").getValue() != null){
+//                        userSex = dataSnapshot.child("sex").getValue().toString();
+//                        switch (userSex){
+//                            case "Male":
+//                                oppositeUserSex = "Female";
+//                                break;
+//                            case "Female":
+//                                oppositeUserSex = "Male";
+//                                break;
+//                        }
+//                        getOppositeSexUsers();
+//                    }
+//                }
+//            }
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+//    }
 
-            }
-        });
-    }
-
-    public void getOppositeSexUsers(){
-        usersDb.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if (dataSnapshot.child("sex").getValue() != null) {
-                    if (dataSnapshot.exists() && !dataSnapshot.child("connections").child("nope").hasChild(currentUId) && !dataSnapshot.child("connections").child("yeps").hasChild(currentUId) && dataSnapshot.child("sex").getValue().toString().equals(oppositeUserSex)) {
-                        String profileImageUrl = "default";
-                        if (!dataSnapshot.child("profileImageUrl").getValue().equals("default")) {
-                            profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
-                        }
-                        cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), profileImageUrl,
-                                Integer.parseInt(dataSnapshot.child("age").getValue().toString()));
-                        rowItems.add(item);
-                        arrayAdapter.notifyDataSetChanged();
-                    }
-                }
-            }
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-            }
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-    }
-
-    public void getMaleUsers(){
-        usersDb.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if (dataSnapshot.getKey() != currentUId && dataSnapshot.child("sex").getValue() != null) {
-                    if (dataSnapshot.exists() && !dataSnapshot.child("connections").child("nope").hasChild(currentUId) && !dataSnapshot.child("connections").child("yeps").hasChild(currentUId) && dataSnapshot.child("sex").getValue().toString().equals("Male")) {
-                        String profileImageUrl = "default";
+//    public void getOppositeSexUsers(){
+//        usersDb.addChildEventListener(new ChildEventListener() {
+//            @Override
+//            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+//                if (dataSnapshot.child("sex").getValue() != null) {
+//                    if (dataSnapshot.exists() && !dataSnapshot.child("connections").child("nope").hasChild(currentUId) && !dataSnapshot.child("connections").child("yeps").hasChild(currentUId) && dataSnapshot.child("sex").getValue().toString().equals(oppositeUserSex)) {
+//                        String profileImageUrl = "default";
 //                        if (!dataSnapshot.child("profileImageUrl").getValue().equals("default")) {
 //                            profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
 //                        }
-                        //Log.i("profileImageUrl", ((Boolean)(dataSnapshot.child("profileImageUrl") == null)).toString());
-                        if(dataSnapshot.child("preferences").getValue() == null){
-                            //add default preferences if they don't exist
-                            addDefaultPreferences(dataSnapshot.getKey());
-                        }
-                        if (dataSnapshot.child("preferences").getValue() != null){
-                            user2Address = new LatLng(dataSnapshot.child("preferences").child("address").child("lat").getValue(Double.class),
-                                    dataSnapshot.child("preferences").child("address").child("lng").getValue(Double.class));
-//                            Log.i("cal distance", ((Double)getDistance(address, user2Address)).toString());
-                            if(getDistance(address, user2Address) <= distance){
-                                cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), profileImageUrl,
-                                        Integer.parseInt(dataSnapshot.child("age").getValue().toString()));
-                                rowItems.add(item);
-                                Collections.shuffle(rowItems, new Random());
-                                arrayAdapter.notifyDataSetChanged();
-                            }
-                        }
-
-
-                    }
-                }
-            }
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-            }
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-    }
-    public void getFemaleUsers(){
-        usersDb.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if (dataSnapshot.getKey() != currentUId && dataSnapshot.child("sex").getValue() != null) {
-                    if (dataSnapshot.exists() && !dataSnapshot.child("connections").child("nope").hasChild(currentUId) && !dataSnapshot.child("connections").child("yeps").hasChild(currentUId) && dataSnapshot.child("sex").getValue().toString().equals("Female")) {
-                        String profileImageUrl = "default";
-//                        if (!dataSnapshot.child("profileImageUrl").getValue().equals("default")) {
-//                            profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
+//                        cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), profileImageUrl,
+//                                Integer.parseInt(dataSnapshot.child("age").getValue().toString()));
+//                        rowItems.add(item);
+//                        arrayAdapter.notifyDataSetChanged();
+//                    }
+//                }
+//            }
+//            @Override
+//            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+//            }
+//            @Override
+//            public void onChildRemoved(DataSnapshot dataSnapshot) {
+//            }
+//
+//            @Override
+//            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+//            }
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//            }
+//        });
+//    }
+//
+//    public void getMaleUsers(){
+//        usersDb.addChildEventListener(new ChildEventListener() {
+//            @Override
+//            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+//                if (dataSnapshot.getKey() != currentUId && dataSnapshot.child("sex").getValue() != null) {
+//                    if (dataSnapshot.exists() && !dataSnapshot.child("connections").child("nope").hasChild(currentUId) && !dataSnapshot.child("connections").child("yeps").hasChild(currentUId) && dataSnapshot.child("sex").getValue().toString().equals("Male")) {
+//                        String profileImageUrl = "default";
+////                        if (!dataSnapshot.child("profileImageUrl").getValue().equals("default")) {
+////                            profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
+////                        }
+//                        //Log.i("profileImageUrl", ((Boolean)(dataSnapshot.child("profileImageUrl") == null)).toString());
+//                        if(dataSnapshot.child("preferences").getValue() == null){
+//                            //add default preferences if they don't exist
+//                            addDefaultPreferences(dataSnapshot.getKey());
 //                        }
-                        if(dataSnapshot.child("preferences").getValue() == null){
-                            //add default preferences if they don't exist
-                            addDefaultPreferences(dataSnapshot.getKey());
-                        }
-                        if(dataSnapshot.child("age").getValue() == null){
-                            //add random default age if doesn't have one
-
-                        }
-                        if (dataSnapshot.child("preferences").getValue() != null){
-                            user2Address = new LatLng(dataSnapshot.child("preferences").child("address").child("lat").getValue(Double.class),
-                                    dataSnapshot.child("preferences").child("address").child("lng").getValue(Double.class));
-//                            Log.i("cal distance", ((Double)getDistance(address, user2Address)).toString());
-                            if(getDistance(address, user2Address) <= distance){
-                                cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), profileImageUrl,
-                                        Integer.parseInt(dataSnapshot.child("age").getValue().toString()));
-                                rowItems.add(item);
-                                Collections.shuffle(rowItems, new Random());
-                                arrayAdapter.notifyDataSetChanged();
-                            }
-                        }
-
-                    }
-                }
-            }
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-            }
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-    }
+//                        if (dataSnapshot.child("preferences").getValue() != null){
+//                            user2Address = new LatLng(dataSnapshot.child("preferences").child("address").child("lat").getValue(Double.class),
+//                                    dataSnapshot.child("preferences").child("address").child("lng").getValue(Double.class));
+////                            Log.i("cal distance", ((Double)getDistance(address, user2Address)).toString());
+//                            if(getDistance(address, user2Address) <= distance){
+//                                cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), profileImageUrl,
+//                                        Integer.parseInt(dataSnapshot.child("age").getValue().toString()));
+//                                rowItems.add(item);
+//                                Collections.shuffle(rowItems, new Random());
+//                                arrayAdapter.notifyDataSetChanged();
+//                            }
+//                        }
+//
+//
+//                    }
+//                }
+//            }
+//            @Override
+//            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+//            }
+//            @Override
+//            public void onChildRemoved(DataSnapshot dataSnapshot) {
+//            }
+//
+//            @Override
+//            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+//            }
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//            }
+//        });
+//    }
+//    public void getFemaleUsers(){
+//        usersDb.addChildEventListener(new ChildEventListener() {
+//            @Override
+//            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+//                if (dataSnapshot.getKey() != currentUId && dataSnapshot.child("sex").getValue() != null) {
+//                    if (dataSnapshot.exists() && !dataSnapshot.child("connections").child("nope").hasChild(currentUId) && !dataSnapshot.child("connections").child("yeps").hasChild(currentUId) && dataSnapshot.child("sex").getValue().toString().equals("Female")) {
+//                        String profileImageUrl = "default";
+////                        if (!dataSnapshot.child("profileImageUrl").getValue().equals("default")) {
+////                            profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
+////                        }
+//                        if(dataSnapshot.child("preferences").getValue() == null){
+//                            //add default preferences if they don't exist
+//                            addDefaultPreferences(dataSnapshot.getKey());
+//                        }
+//                        if(dataSnapshot.child("age").getValue() == null){
+//                            //add random default age if doesn't have one
+//
+//                        }
+//                        if (dataSnapshot.child("preferences").getValue() != null){
+//                            user2Address = new LatLng(dataSnapshot.child("preferences").child("address").child("lat").getValue(Double.class),
+//                                    dataSnapshot.child("preferences").child("address").child("lng").getValue(Double.class));
+////                            Log.i("cal distance", ((Double)getDistance(address, user2Address)).toString());
+//                            if(getDistance(address, user2Address) <= distance){
+//                                cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), profileImageUrl,
+//                                        Integer.parseInt(dataSnapshot.child("age").getValue().toString()));
+//                                rowItems.add(item);
+//                                Collections.shuffle(rowItems, new Random());
+//                                arrayAdapter.notifyDataSetChanged();
+//                            }
+//                        }
+//
+//                    }
+//                }
+//            }
+//            @Override
+//            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+//            }
+//            @Override
+//            public void onChildRemoved(DataSnapshot dataSnapshot) {
+//            }
+//
+//            @Override
+//            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+//            }
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//            }
+//        });
+//    }
     public void getAllSexUsers(){
 //        getMaleUsers();
 //        getFemaleUsers();
@@ -385,19 +439,26 @@ public class MainActivity extends AppCompatActivity {
                         }
                         //addDefaultBio(dataSnapshot.getKey());
                         if (dataSnapshot.child("preferences").getValue() != null){
+
                             user2Address = new LatLng(dataSnapshot.child("preferences").child("address").child("lat").getValue(Double.class),
                                     dataSnapshot.child("preferences").child("address").child("lng").getValue(Double.class));
 //                            Log.i("cal distance", ((Double)getDistance(address, user2Address)).toString());
-                            user2Age = dataSnapshot.child("age").getValue(Integer.class);
-                            if (ageRange[0] <= user2Age && user2Age <= ageRange[1]){
-                                if(getDistance(address, user2Address) <= distance){
-                                    cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), profileImageUrl,
-                                            Integer.parseInt(dataSnapshot.child("age").getValue().toString()));
-                                    rowItems.add(item);
-                                    Collections.shuffle(rowItems, new Random());
-                                    arrayAdapter.notifyDataSetChanged();
+                            if (dataSnapshot.child("age").getValue() != null){
+                                user2Age = dataSnapshot.child("age").getValue(Integer.class);
+                                if (ageRange[0] <= user2Age && user2Age <= ageRange[1]){
+                                    if(getDistance(address, user2Address) <= distance){
+                                        cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), profileImageUrl,
+                                                Integer.parseInt(dataSnapshot.child("age").getValue().toString()), new Preferences(),
+                                                dataSnapshot.child("bio").getValue(String.class), dataSnapshot.child("goal").getValue(String.class),
+                                                dataSnapshot.child("interestA").getValue(Long.class), dataSnapshot.child("interestB").getValue(Long.class),
+                                                dataSnapshot.child("interestC").getValue(Long.class), dataSnapshot.child("skillLevel").getValue(Long.class));
+                                        rowItems.add(item);
+                                        Collections.shuffle(rowItems, new Random());
+                                        arrayAdapter.notifyDataSetChanged();
+                                    }
                                 }
                             }
+
 
                         }
 
