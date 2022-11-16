@@ -136,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
     private void openBio(cards swipedUser) {
         Intent intent = new Intent(this, MatchBioActivity.class);
         intent.putExtra("swipedUserName", swipedUser.getName());
+        intent.putExtra("swipedUserId", swipedUser.getUserId());
         startActivity(intent);
     }
 
@@ -236,7 +237,8 @@ public class MainActivity extends AppCompatActivity {
                         if (!dataSnapshot.child("profileImageUrl").getValue().equals("default")) {
                             profileImageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
                         }
-                        cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), profileImageUrl);
+                        cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), profileImageUrl,
+                                Integer.parseInt(dataSnapshot.child("age").getValue().toString()));
                         rowItems.add(item);
                         arrayAdapter.notifyDataSetChanged();
                     }
@@ -278,7 +280,8 @@ public class MainActivity extends AppCompatActivity {
                                     dataSnapshot.child("preferences").child("address").child("lng").getValue(Double.class));
 //                            Log.i("cal distance", ((Double)getDistance(address, user2Address)).toString());
                             if(getDistance(address, user2Address) <= distance){
-                                cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), profileImageUrl);
+                                cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), profileImageUrl,
+                                        Integer.parseInt(dataSnapshot.child("age").getValue().toString()));
                                 rowItems.add(item);
                                 Collections.shuffle(rowItems, new Random());
                                 arrayAdapter.notifyDataSetChanged();
@@ -327,7 +330,8 @@ public class MainActivity extends AppCompatActivity {
                                     dataSnapshot.child("preferences").child("address").child("lng").getValue(Double.class));
 //                            Log.i("cal distance", ((Double)getDistance(address, user2Address)).toString());
                             if(getDistance(address, user2Address) <= distance){
-                                cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), profileImageUrl);
+                                cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), profileImageUrl,
+                                        Integer.parseInt(dataSnapshot.child("age").getValue().toString()));
                                 rowItems.add(item);
                                 Collections.shuffle(rowItems, new Random());
                                 arrayAdapter.notifyDataSetChanged();
@@ -377,7 +381,8 @@ public class MainActivity extends AppCompatActivity {
                                     dataSnapshot.child("preferences").child("address").child("lng").getValue(Double.class));
 //                            Log.i("cal distance", ((Double)getDistance(address, user2Address)).toString());
                             if(getDistance(address, user2Address) <= distance){
-                                cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), profileImageUrl);
+                                cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), profileImageUrl,
+                                        Integer.parseInt(dataSnapshot.child("age").getValue().toString()));
                                 rowItems.add(item);
                                 Collections.shuffle(rowItems, new Random());
                                 arrayAdapter.notifyDataSetChanged();

@@ -6,10 +6,12 @@ public class cards {
     private String userId;
     private String name;
     private String profileImageUrl;
-    public cards (String userId, String name, String profileImageUrl){
+    private int age;
+    public cards (String userId, String name, String profileImageUrl, int age){
         this.userId = userId;
         this.name = name;
         this.profileImageUrl = profileImageUrl;
+        this.age = age;
     }
 
     public String getUserId(){
@@ -32,4 +34,9 @@ public class cards {
     public void setProfileImageUrl(String profileImageUrl){
         this.profileImageUrl = profileImageUrl;
     }
+
+    public int getAge() {
+        return age;
+    }
+
 }
