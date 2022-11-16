@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -145,6 +147,44 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.profile:
+                Intent intent = new Intent(MainActivity.this, EditUserActivity.class);
+                intent.putExtra("userSex", userSex);
+                startActivity(intent);
+                break;
+            case R.id.preferences:
+                intent = new Intent(MainActivity.this, PreferencesActivity.class);
+                intent.putExtra("currentUId", currentUId);
+                intent.putExtra("currentUId", currentUId);
+                intent.putExtra("lat", address.latitude);
+                intent.putExtra("lng", address.longitude);
+                intent.putExtra("distance", distance);
+                intent.putExtra("min_age", ageRange[0]);
+                intent.putExtra("max_age", ageRange[1]);
+                intent.putExtra("sexPref", sexPreference);
+
+                startActivity(intent);
+                break;
+            case R.id.matches:
+                intent = new Intent(MainActivity.this, MatchesActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.logout:
+                mAuth.signOut();
+                intent = new Intent(MainActivity.this, loginOrReg.class);
+                startActivity(intent);
+                finish();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void openBio(cards swipedUser) {
@@ -481,38 +521,7 @@ public cards getCurrentUserCard(){
         });
     }
 
-    public void logoutUser(android.view.View view) {
-        mAuth.signOut();
-        Intent intent = new Intent(MainActivity.this, loginOrReg.class);
-        startActivity(intent);
-        finish();
-        return;
-    }
 
-    public void goToSettings(android.view.View view) {
-        Intent intent = new Intent(MainActivity.this, EditUserActivity.class);
-        intent.putExtra("userSex", userSex);
-        startActivity(intent);
-        return;
-    }
-
-    public void goToMatches(android.view.View view) {
-        Intent intent = new Intent(MainActivity.this, MatchesActivity.class);
-        startActivity(intent);
-        return;
-    }
-    public void goToPictures(android.view.View view) {
-        Intent intent = new Intent(MainActivity.this, PreferencesActivity.class);
-        intent.putExtra("currentUId", currentUId);
-        intent.putExtra("lat", address.latitude);
-        intent.putExtra("lng", address.longitude);
-        intent.putExtra("distance", distance);
-        intent.putExtra("min_age", ageRange[0]);
-        intent.putExtra("max_age", ageRange[1]);
-        intent.putExtra("sexPref", sexPreference);
-        startActivity(intent);
-        return;
-    }
     public LatLng randomTown(){
         LatLng [] towns = {new LatLng(36.044659, -79.766235),
         new LatLng(36.112478,-80.015112),
