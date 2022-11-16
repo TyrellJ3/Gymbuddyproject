@@ -48,6 +48,10 @@ public class MainActivity extends AppCompatActivity {
     private LatLng address;
     private double distance;
 
+    private int user2Age;
+
+    private final int[] ageRange = new int[2];
+
     ListView listView;
     List<cards> rowItems;
 
@@ -187,6 +191,10 @@ public class MainActivity extends AppCompatActivity {
                     }
                     if(snapshot.child("distance").getValue() != null){
                         distance = snapshot.child("distance").getValue(Double.class);
+                    }
+                    if(snapshot.child("age").getValue() != null){
+                        ageRange[0] = snapshot.child("age").child("min_age").getValue(Integer.class);
+                        ageRange[1] = snapshot.child("age").child("max_age").getValue(Integer.class);
                     }
                 }
             }
@@ -380,13 +388,17 @@ public class MainActivity extends AppCompatActivity {
                             user2Address = new LatLng(dataSnapshot.child("preferences").child("address").child("lat").getValue(Double.class),
                                     dataSnapshot.child("preferences").child("address").child("lng").getValue(Double.class));
 //                            Log.i("cal distance", ((Double)getDistance(address, user2Address)).toString());
-                            if(getDistance(address, user2Address) <= distance){
-                                cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), profileImageUrl,
-                                        Integer.parseInt(dataSnapshot.child("age").getValue().toString()));
-                                rowItems.add(item);
-                                Collections.shuffle(rowItems, new Random());
-                                arrayAdapter.notifyDataSetChanged();
+                            user2Age = dataSnapshot.child("age").getValue(Integer.class);
+                            if (ageRange[0] <= user2Age && user2Age <= ageRange[1]){
+                                if(getDistance(address, user2Address) <= distance){
+                                    cards item = new cards(dataSnapshot.getKey(), dataSnapshot.child("name").getValue().toString(), profileImageUrl,
+                                            Integer.parseInt(dataSnapshot.child("age").getValue().toString()));
+                                    rowItems.add(item);
+                                    Collections.shuffle(rowItems, new Random());
+                                    arrayAdapter.notifyDataSetChanged();
+                                }
                             }
+
                         }
 
                     }
@@ -431,6 +443,12 @@ public class MainActivity extends AppCompatActivity {
     public void goToPictures(android.view.View view) {
         Intent intent = new Intent(MainActivity.this, PreferencesActivity.class);
         intent.putExtra("currentUId", currentUId);
+        intent.putExtra("lat", address.latitude);
+        intent.putExtra("lng", address.longitude);
+        intent.putExtra("distance", distance);
+        intent.putExtra("min_age", ageRange[0]);
+        intent.putExtra("max_age", ageRange[1]);
+        intent.putExtra("sexPref", sexPreference);
         startActivity(intent);
         return;
     }
