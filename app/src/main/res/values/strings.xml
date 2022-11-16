@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">GymBuddy</string>
 
-    <string name="api_key"></string>
+    <string name="api_key">AIzaSyBIfL_KGYQX1_KHpB7Df9oxJjt9wt4DbR8</string>
     <!--    this are the controllers for the age/range slider-->
     <array name="ageRangeSliderValues">
         <item>18</item>
